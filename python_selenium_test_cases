@@ -10,15 +10,15 @@ from time import sleep
 Here is my attempt to automate a test case suite using Python, Unittest, Selenium
 for a website. 
 
-NOTE: Usually 2 from my 8 test cases fail, the one because of not being able to 
-locate the element in the browser (tried with Xpath and everything). 
+NOTE:  2 from my 8 test cases fail, the one because of not being able to 
+locate the element in the browser (Xpath). 
 The other one failed on my laptop for similar reasons
 
 HOW I RUN THEM:
 Import the script on Pycharm. Enable Unittest at Settings> Python Integrated tools>
 Test Runner.
 
-I could also use the command in the command line. python -m unittest -v tst.py
+I can also use the command in the command line. python -m unittest -v tst.py
 
 """
 
