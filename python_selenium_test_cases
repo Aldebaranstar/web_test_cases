@@ -1,0 +1,143 @@
+from selenium import webdriver
+import unittest
+# from selenium.webdriver.common.by import By
+# from selenium.webdriver.support.ui import WebDriverWait
+# from selenium.webdriver.support import expected_conditions as EC
+# from selenium.webdriver.common.keys import Keys
+from time import sleep
+
+"""
+Here is my attempt to automate a test case suite using Python, Unittest, Selenium
+for a website. 
+
+NOTE: Usually 2 from my 8 test cases fail, the one because of not being able to 
+locate the element in the browser (tried with Xpath and everything). 
+The other one failed on my laptop for similar reasons
+
+HOW I RUN THEM:
+Import the script on Pycharm. Enable Unittest at Settings> Python Integrated tools>
+Test Runner.
+
+I could also use the command in the command line. python -m unittest -v tst.py
+
+"""
+
+class MyTest(unittest.TestCase):
+    # declare variable to store the URL to be visited
+    main_page = "https://www.tushyraw.com/red-eye"
+
+    def setUp(self):
+        # declare and initialize driver variable
+        self.chrome_driver_path = 'D:\\Downloads\\chromedriver_win32\\chromedriver'
+        self.driver = webdriver.Chrome(executable_path=self.chrome_driver_path)
+        # browser should be loaded in maximized window
+        self.driver.maximize_window()
+        # driver should wait implicitly for a given duration, for the element under consideration to load.
+        # to enforce this setting we will use builtin implicitly_wait() function of our 'driver' object.
+        self.driver.implicitly_wait(10)  # 10 is in seconds
+
+    def test_home_title_is_displayed_and_exists(self):
+        """
+        Verify that the homepage is displayed
+        """
+        page_title_xpath = '//*[@id="root"]/header/div[2]/div/a'
+        self.driver.get(self.main_page)
+        self.driver.maximize_window()
+        element = self.driver.find_element_by_xpath(page_title_xpath)
+        assert element is not None
+        assert element.is_displayed() is True
+
+    def test_login_description(self):
+        """
+        Verify that Login page DESCRIPTION is Correct
+        """
+        self.driver.get("https://login.vixen.com/i/tushy/login?")
+        self.driver.maximize_window()
+        login_page_description = self.driver.title
+        #driver.save_screenshot('C:\\Users\\nefel\\PycharmProjects\\QATesting\\captcha_screenshot.png')
+        assert login_page_description == 'Members Area'
+        assert login_page_description is not None
+        print(self.driver.title)
+
+    def test_verify_redirection_to_login_page(self):
+        """
+        Verify searching for 'LOGIN' and clicking LOGIN button works and redirects to correct URL
+        """
+        # Finding the element
+        login_element = self.driver.find_element_by_xpath('//*[@id="root"]/footer/div[2]/div[1]/a[2]')
+        login_element.click()
+        assert login_element.is_displayed(self)
+
+        # Make sure we redirect to other url (in that case the Login page)
+        members_area_url = self.driver.get('https://login.vixen.com/i/tushyraw/login?')
+        assert self.driver.current_url != self.main_page
+        assert self.driver.current_url == members_area_url
+
+    def test_login_btn_is_displayed(self):
+        """
+        Check that login button is displayed
+        """
+        self.driver.get('https://login.vixen.com/i/tushyraw/login?')
+        print('Entering username...')
+        self.driver.find_element_by_id("username").send_keys("Admin")
+        print('Entering password...')
+        self.driver.find_element_by_id("password").send_keys("admin")
+        print('Logging in...')
+        login_button = self.driver.find_element_by_class_name("g-recaptcha")
+        assert login_button.is_displayed() is True
+
+    def test_footer_exists_visible(self):
+        self.driver.get(self.main_page)
+        self.driver.maximize_window()
+        footer = self.driver.find_element_by_xpath('// *[ @ id = "root"] / footer')
+        assert footer.is_displayed() is True
+
+    def test_add_search_term(self):
+        self.driver.get(self.main_page)
+        self.driver.maximize_window()
+
+        search_btn = self.driver.find_element_by_xpath('//*[@id="root"]/header/div[2]/div/nav/div[2]/a')
+        search_btn.click()
+
+    def test_home_page_correct_title_description(self):
+        """ Check if title description exists and checks name"""
+        self.driver.get("https://www.tushyraw.com/")
+        self.driver.maximize_window()
+        title_description = self.driver.find_element_by_xpath('//*[@id="root"]/header/div[2]/div/a')
+        # assert title_description == 'TUSHY RAW : Hardcore Anal Sex Videos'
+        assert title_description is not None
+
+    def test_search_bar_box(self):
+        search_term = 'lesbian'
+        self.driver.get("https://www.tushyraw.com/")
+        search_text_box = self.driver.find_element_by_xpath('//*[@id="root"]/header/div[2]/div/nav/div[2]')
+        search_text_box.click()
+        # to clear any text in the search textbox
+        # to enter the search term in the search textbox via send_keys() function
+        search_text_box.send_keys(search_term)
+        self.assertTrue(search_text_box.is_displayed())
+        # to search for the entered search term
+        # search_text_box.send_keys(Keys.RETURN)
+        # # since the clicked product opens in a new tab, we need to switch to that tab.
+        # # to do so we will use window_handles()
+        # self.driver.switch_to.window(self.driver.window_handles[1])
+
+    def tearDown(self):
+        self.driver.close()
+        # to close the browser
+        self.driver.quit()
+
+if __name__ == '__main__':
+    unittest.main()
+
+
+
+
+
+
+
+
+
+
+
+
